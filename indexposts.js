@@ -75,6 +75,7 @@ async function getPosts() {
             }
         
             
+            
 async function main() {
     let posts = await getPosts()
     const userIds = getIdByPosts(posts)
