@@ -144,7 +144,7 @@ const tdiv1 = p.querySelector('.titre')
 }
     
     main()
-
+//function pour cliquer et afficher les commentaires
     function toggleComments(postId){
         let x = document.getElementById(postId)
         let y = x.children[4]
