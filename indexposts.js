@@ -31,26 +31,30 @@ async function getPosts() {
             return data
             }
             
-            
-
             async function modifNomTitreBody(post){
                 
                 for(let i=0; i<post.length; i++){
+
                 const divPost = document.getElementById('posts-container')
                 const template = document.getElementById('temp')
                 const h2= template.content.cloneNode(true)
+                const tdivId = h2.querySelector('.post')
                 const tdiv = h2.querySelector('.pMail')
                 const tdiv1 = h2.querySelector('.titre')
                 const tdiv2 = h2.querySelector('.pDuPost')
                 const tdiv3 = h2.querySelector('.avatar')
                 const commentsElement = h2.querySelector('.post-comment-nb')
-                const comments = h2.querySelector('.comments-hide')
+                const comments = h2.querySelector('.comments')
+                tdivId.id = `post-${post[i].id}`
                 tdiv.textContent = '@' + post[i].author.name
                 tdiv1.textContent = post[i].title
                 tdiv2.textContent = post[i].body
                 tdiv3.src = `https://ui-avatars.com/api/?name=${post[i].author.name}&background=random`
                 commentsElement.textContent = `${post[i].comments.length}` + "  " + "commentaire(s)"
-                console.log(post[i]);
+                tdivId.addEventListener('click', function(){
+                    toggleComments(`post-${post[i].id}`)
+                })
+
                 const bodyCom = post[i].comments
                 let b = 1
                 bodyCom.forEach(function(com){
@@ -62,6 +66,7 @@ async function getPosts() {
 
                     b++
                 })
+                
                 divPost.appendChild(h2)
                 
                 }
@@ -89,6 +94,8 @@ async function main() {
     
 }
     modifNomTitreBody(posts)
+
+
 
     // Récuperer le nom de la personne qui envoie le post
     // Je séléctionne ma div, où on ajoutera la copie de notre template
@@ -137,4 +144,10 @@ const tdiv1 = p.querySelector('.titre')
 }
     
     main()
+
+    function toggleComments(postId){
+        let x = document.getElementById(postId)
+        let y = x.children[4]
+        y.classList.toggle(`hide`)
+    }
 
