@@ -25,21 +25,17 @@ async function getPosts() {
         return authors
         }
 
-        async function getCommentLength(posts) {
-            const nombreCommentaire = {}
-            for (let index = 0; index < posts.length; index++) {
-            const post = posts[index];
-            const reponse = await fetch(`https://jsonplaceholder.typicode.com/posts/${post.id}/comments`)
+        async function getComment(postsId) {
+            const reponse = await fetch(`https://jsonplaceholder.typicode.com/posts/${postsId}/comments`)
             const data = await reponse.json()
-            nombreCommentaire[post.id] = data.length
-            }
-            return nombreCommentaire
+            return data
             }
             
+            
 
-
-            function modifNomTitreBody(posts, authors){
-                for(let i=0; i<posts.length; i++){
+            async function modifNomTitreBody(post){
+                
+                for(let i=0; i<post.length; i++){
                 const divPost = document.getElementById('posts-container')
                 const template = document.getElementById('temp')
                 const h2= template.content.cloneNode(true)
@@ -47,30 +43,49 @@ async function getPosts() {
                 const tdiv1 = h2.querySelector('.titre')
                 const tdiv2 = h2.querySelector('.pDuPost')
                 const tdiv3 = h2.querySelector('.avatar')
-                const auteur = authors.filter(function(element){  
-                return posts[i].userId == element.id
+                const commentsElement = h2.querySelector('.post-comment-nb')
+                const comments = h2.querySelector('.comments-hide')
+                tdiv.textContent = '@' + post[i].author.name
+                tdiv1.textContent = post[i].title
+                tdiv2.textContent = post[i].body
+                tdiv3.src = `https://ui-avatars.com/api/?name=${post[i].author.name}&background=random`
+                commentsElement.textContent = `${post[i].comments.length}` + "  " + "commentaire(s)"
+                console.log(post[i]);
+                const bodyCom = post[i].comments
+                let b = 1
+                bodyCom.forEach(function(com){
+                    comments.innerHTML += `<img class = 'avatar ' src = 'https://ui-avatars.com/api/?name=${com.email}&background=random'></p>`
+                    comments.innerHTML += `<p style="color : blue"> ${com.email}</p>`
+                    comments.innerHTML += `<p > ${b} :  ${com.body} </p>`
+                    b++
                 })
-                
-                tdiv.textContent = '@' + auteur[0].name
-                tdiv1.textContent = posts[i].title
-                tdiv2.textContent = posts[i].body
-                tdiv3.src = `https://ui-avatars.com/api/?name=${auteur[0].name}&background=random`
                 divPost.appendChild(h2)
-                console.log(auteur)
+                
                 }
-            }
             
+                
+            }
+        
             
 async function main() {
-    const posts = await getPosts()
-    console.log(posts);
+    let posts = await getPosts()
     const userIds = getIdByPosts(posts)
-    console.log(userIds);
     const authors = await getAuthors(userIds)
-    console.log(authors);
-    const nbComments = await getCommentLength(posts)
-    console.log(nbComments);
-    modifNomTitreBody(posts,authors)
+    const nbComments = await getComment(posts)
+
+    posts = posts.map(function(post){
+        const author = authors.find(function(auteur){
+            return auteur.id === post.userId
+        })
+        post.author = author
+    return post
+})
+    for ( let index = 0; index<posts.length; index++){
+        let post = posts[index];
+        posts[index].comments = await getComment(post.id)
+    
+}
+    modifNomTitreBody(posts)
 
     // Récuperer le nom de la personne qui envoie le post
     // Je séléctionne ma div, où on ajoutera la copie de notre template
@@ -119,6 +134,4 @@ const tdiv1 = p.querySelector('.titre')
 }
     
     main()
-
-    console.log(main())
 
