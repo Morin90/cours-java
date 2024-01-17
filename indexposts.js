@@ -55,8 +55,11 @@ async function getPosts() {
                 let b = 1
                 bodyCom.forEach(function(com){
                     comments.innerHTML += `<img class = 'avatar ' src = 'https://ui-avatars.com/api/?name=${com.email}&background=random'></p>`
-                    comments.innerHTML += `<p style="color : blue"> ${com.email}</p>`
+                    
                     comments.innerHTML += `<p > ${b} :  ${com.body} </p>`
+
+                    comments.innerHTML += `<p style="color : blue"> ${com.email}</p>`
+
                     b++
                 })
                 divPost.appendChild(h2)
